@@ -44,7 +44,7 @@ function App() {
             setShowAdd(true);
           }}
         >
-          ADD USER
+          Add User
         </button>
         {showAdd && (
           <>
