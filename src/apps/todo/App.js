@@ -22,7 +22,7 @@ const App = () => {
     const isValid = validate(newTodo);
 
     if (isValid) {
-      setTodos([...todos, { text: newTodo, checked: false }]);
+      setTodos([...todos, { text: newTodo, checked: false, editing: false }]);
       setNewTodo("");
     }
   };
@@ -50,6 +50,15 @@ const App = () => {
     let id = Number(e.currentTarget.id);
     let newTodos = [...todos];
     newTodos[id].checked = !newTodos[id].checked;
+    setTodos(newTodos);
+  };
+
+  const toggleEditing = (index) => {
+    let newTodos = [...todos];
+    newTodos[index] = {
+      ...newTodos[index],
+      editing: !newTodos[index].editing,
+    };
     setTodos(newTodos);
   };
 
@@ -94,21 +103,59 @@ const App = () => {
                 checked={todo.checked}
                 onChange={checkTask}
               />
-              <Typography sx={{ flex: 1 }} id={index} onClick={checkTask}>
-                {todo.text}
-              </Typography>
+              {!todo.editing ? (
+                <>
+                  {" "}
+                  <Typography sx={{ flex: 1 }} id={index} onClick={checkTask}>
+                    {todo.text}
+                  </Typography>
+                </>
+              ) : (
+                <>
+                  <TextField
+                    onChange={(e) => {
+                      let newTodoValue = e.target.value;
+                      let newTodos = [...todos];
+                      newTodos[index] = {
+                        ...newTodos[index],
+                        text: newTodoValue,
+                      };
+                      setTodos(newTodos);
+                    }}
+                    value={todo.text}
+                  />
+                </>
+              )}
 
-              <Button variant="contained" sx={buttonStyles}>
-                Edit
-              </Button>
-              <Button
-                variant="contained"
-                sx={buttonStyles}
-                onClick={deleteTask}
-                id={index}
-              >
-                Delete
-              </Button>
+              {!todo.editing ? (
+                <>
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles}
+                    onClick={() => toggleEditing(index)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles}
+                    onClick={deleteTask}
+                    id={index}
+                  >
+                    Delete
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="contained"
+                    sx={buttonStyles}
+                    onClick={() => toggleEditing(index)}
+                  >
+                    Save
+                  </Button>
+                </>
+              )}
             </Card>
           );
         })}
